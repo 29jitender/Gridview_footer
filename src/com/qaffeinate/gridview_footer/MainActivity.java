@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import android.app.Activity;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.GridView;
@@ -78,44 +78,46 @@ OnScrollListener scrollListener = new OnScrollListener() {
 		
 		@Override
 		public void onScrollStateChanged(AbsListView v, int scrollState) {	
-			Log.i("the check",gridArray.size()+"");
+			//Log.i("the check",gridArray.size()+"");
 
  		}
 		
 		@Override
 		public void onScroll(final AbsListView view, int firstVisibleItem,
 				int visibleItemCount, int totalItemCount) {
-			if( (gridView.getLastVisiblePosition() == gridView.getAdapter().getCount() -1 &&
-					gridView.getChildAt(gridView.getChildCount() - 1).getBottom() <= gridView.getHeight())
-					 )
-				{
-				
-				show_more.setVisibility(view.VISIBLE);
-				if(checking){
-
-					checking=false;
-
-					final Handler handler = new Handler();
-					
-	                handler.postDelayed(new Runnable() {
-	                  @Override
-	                  public void run() {
-	                         gridArray.addAll(gridArray_update);
-	                        customGridAdapter.notifyDataSetChanged();
-	                        checking=true;
-	        				show_more.setVisibility(view.GONE);
-
-	                        }
-	                }, 3300);
-				}
-				
-  					}
 			
-			else{
-				show_more.setVisibility(view.GONE);
+			if (firstVisibleItem == 0 && visibleItemCount == 0 && totalItemCount == 0) {
+				return;
 			}
-				
-			 
+ 
+			if (firstVisibleItem + visibleItemCount == totalItemCount) {
+				if (show_more.getVisibility() == View.GONE) {
+					show_more.setVisibility(View.VISIBLE);
+					if(checking){
+					
+										checking=false;
+					
+										final Handler handler = new Handler();
+										
+						                handler.postDelayed(new Runnable() {
+						                  @Override
+						                  public void run() {
+						                         gridArray.addAll(gridArray_update);
+						                        customGridAdapter.notifyDataSetChanged();
+						                        checking=true;
+						        				show_more.setVisibility(view.GONE);
+					
+						                        }
+						                }, 3300);
+									}
+				}
+			} else {
+				if (show_more.getVisibility() == View.VISIBLE) {
+					show_more.setVisibility(View.GONE);
+				}
+			}
+			
+		 
 						 
 		}
 	};
